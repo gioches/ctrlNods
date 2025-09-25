@@ -1,0 +1,71 @@
+# ctrlNods Agent - Git Ignore File
+
+# Log files and data
+logs/*.log
+logs/*.txt
+data/*.log
+data/*.sqlite
+data/*.db
+
+# Runtime status files
+status/*.ok
+status/*.flag
+status/*.pid
+
+# Configuration files with sensitive data
+config/production.conf
+config/secrets.conf
+*.env
+.env.*
+
+# Temporary and cache files
+tmp/
+cache/
+*.tmp
+*.cache
+
+# System files
+.DS_Store
+Thumbs.db
+
+# IDE and editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Test files
+test_data/
+test_results/
+mock_data/
+
+# Backup files
+*.backup
+*.bak
+*_backup/
+*_old/
+
+# Compiled binaries (if any)
+bin/compiled/
+*.o
+*.so
+
+# Package files
+*.tar.gz
+*.zip
+*.tgz
+
+# OS specific
+*.pid
+*.sock
+
+# Development and debug files
+debug_*.sh
+test_*.sh
+dev_*.conf
+
+# Documentation build artifacts
+docs/build/
+*.pdf
+*.docx
