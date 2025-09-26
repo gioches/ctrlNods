@@ -284,13 +284,16 @@ cd ctrlClus
 
 **Giorgio Chessari** - Senior Database Administrator & Enterprise Infrastructure Architect
 
-- 🌐 **Professional Website**: [giorgio.chessari.it](http://giorgio.chessari.it)
+- 🌐 **Personal Website**: [giorgio.chessari.it](http://giorgio.chessari.it)
+- 🏢 **Professional Website**: [kesnet.it](http://kesnet.it)
+- 💼 **LinkedIn**: [linkedin.com/in/gio1](https://www.linkedin.com/in/gio1)
 - 🎖️ **Enterprise Experience**: 15+ years managing mission-critical database infrastructure
-- 🏦 **Industry Focus**: Financial services, banking systems, payment processing platforms
+- 🏦 **Industry Specialization**: Insurance (Assicurativo), Banking (Bancario), Healthcare (Sanitario), Telecommunications (Telecomunicazioni), Multi-services (Multiservizi)
 - 🔧 **Technical Expertise**: Cassandra clusters, MongoDB, Redis with Sentinel, distributed databases, NoSQL optimization
 - 🚀 **Innovation**: Creator of enterprise monitoring solutions for high-availability systems
 - 📈 **Scale**: Experience with systems processing millions of transactions daily
+- 🎯 **Project Leadership**: Founder & Lead Developer of [mondoagenzia.it](http://mondoagenzia.it) - software distributed to 250+ Allianz-Unipolsai agencies
 
-**Discover more enterprise database solutions and professional consulting services at [giorgio.chessari.it](http://giorgio.chessari.it)**
+**Discover more enterprise database solutions and professional consulting services at [giorgio.chessari.it](http://giorgio.chessari.it) | [kesnet.it](http://kesnet.it)**
 
 *ctrlNods represents years of real-world experience solving complex database monitoring challenges in enterprise production environments.*
