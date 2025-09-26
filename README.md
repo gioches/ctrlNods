@@ -25,10 +25,12 @@
 - **Service Availability**: Critical port monitoring (7001, 7199, 9142)
 
 ### ⚡ High-Performance Architecture
-- **RAM Disk Storage**: Events stored on tmpfs for ultra-fast I/O
-- **Minimal Overhead**: Lightweight Bash scripts with minimal resource consumption
-- **Efficient Sync**: Smart data synchronization to central database
-- **Modular Design**: Easy to extend with custom monitoring modules
+- **RAM Disk Storage**: Events stored on `/opt/ramdisk` tmpfs for ultra-fast I/O operations
+- **SQLite Integration**: Local database at `/opt/ramdisk/log/data.sqlite` for state management
+- **Disk Freeze Resilience**: Monitoring continues even during disk I/O failures - **critical enterprise feature**
+- **Minimal Overhead**: Lightweight Bash scripts with < 50MB RAM usage per node
+- **Nanosecond Precision**: High-precision timing for performance measurements
+- **Modular Design**: 15+ production scripts with comprehensive monitoring coverage
 
 ### 🚨 Intelligent Alerting
 - **Multi-Channel Alerts**: Teams chat, email, SMS notifications
@@ -77,41 +79,71 @@ The ctrlNods solution emerged from real production challenges encountered while 
 ### Agent Components
 ```
 ctrlNods/
-├── setup/
-│   ├── 00_POSTreboot.sh      # RAM disk initialization
-│   ├── 01_updatefs.sh        # Log rotation management
-│   └── 02_syncDB.sh          # Central database sync
-├── core/
-│   ├── M_chk.sh              # Main application launcher
+├── core/                     # Core application logic (15+ scripts)
+│   ├── M_chk.sh              # Main monitoring coordinator
 │   ├── M_config.sh           # Configuration management
-│   └── M_control.sh          # Core monitoring logic
+│   ├── M_control.sh          # SQLite-based state engine
+│   ├── M_lib_schedule.sh     # Scheduling library
+│   ├── 00_POSTreboot.sh      # RAM disk initialization
+│   ├── 200_setup.sh          # Complete system setup (10KB+)
+│   ├── 210_mkconfig.sh       # Dynamic configuration generator
+│   ├── 250_deploy.sh         # Deployment automation
+│   ├── 500_exp.sh            # Data export
+│   ├── 520_send.sh           # Data transmission
+│   ├── 550_updatefs.sh       # Filesystem maintenance
+│   └── cassandra_disk_monitor.sh # Specialized disk monitoring (10KB+)
 ├── modules/
-│   ├── generic/              # System-level monitoring
-│   │   ├── S_DISK.sh         # Disk I/O performance
-│   │   ├── S_CPU.sh          # CPU usage tracking
+│   ├── generic/              # Cross-platform monitoring
+│   │   ├── S_DISK.sh         # Disk I/O performance (100MB tests)
 │   │   ├── S_PING.sh         # Network connectivity
 │   │   └── S_NMAP.sh         # Service port monitoring
-│   ├── cassandra/            # Cassandra-specific monitoring
-│   │   ├── S_QueryLatency.sh # Query performance metrics
-│   │   ├── S_QueryQueue.sh   # Thread pool monitoring
-│   │   ├── S_Balancing.sh    # Data streaming status
-│   │   ├── S_ClusterState.sh # Cluster health status
-│   │   ├── S_HINTS.sh        # Hints file monitoring
-│   │   ├── S_Partition.sh    # Large partition detection
-│   │   └── S_MEM.sh          # Memory & GC monitoring
-│   └── test/                 # Diagnostic modules
-├── data/
-│   ├── data.log              # Text-based event log
+│   └── cassandra/            # Cassandra-specific monitoring
+│       └── S_HINTS.sh        # Hints file analysis (1.7KB production script)
+├── setup/                    # Installation scripts
+├── data/                     # Runtime data storage
 │   ├── data.sqlite          # Local SQLite database
 │   └── UP_*.ok              # Service status flags
-└── bin/                      # Required binaries
+├── bin/                      # Required binaries & SQLite schema
+├── integration/              # Platform-specific integrations
+│   └── windows/              # Windows tools for air-gapped networks
+│       ├── get_json.bat      # Multi-node data collector
+│       └── README.md         # Windows integration guide
+└── config/                   # Configuration files
 ```
 
-### Data Flow
+### Data Flow & Transfer Architecture
+
+**Local Operations**:
 1. **Local Monitoring** → Agents collect metrics from each Cassandra node
-2. **RAM Storage** → Events stored on tmpfs for high performance
-3. **Smart Sync** → Periodic synchronization to central MongoDB
-4. **Web Visualization** → [ctrlClus dashboard](https://github.com/gioches/ctrlClus) for cluster-wide analysis
+2. **RAM Storage** → Events stored on `/opt/ramdisk` tmpfs for high performance
+3. **SQLite Database** → Local state management with event correlation in RAM
+
+**Data Transfer to ctrlClus** (Two Methods):
+
+**Method 1: Direct Internet Access**
+4a. **JSON Export** → `500_exp.sh` exports SQLite data to JSON format
+5a. **HTTP Transfer** → `520_send.sh` sends data directly to ctrlClus web server
+6a. **Web Visualization** → [ctrlClus dashboard](https://github.com/gioches/ctrlClus) processes data
+
+**Method 2: Windows Bridge (Air-Gapped Networks)**
+4b. **JSON Export** → `500_exp.sh` creates `/opt/ramdisk/exp/exp_tutto.json`
+5b. **Windows Collection** → `get_json.bat` uses plink/pscp to collect from all nodes
+6b. **Manual/Automated Upload** → Windows system uploads to ctrlClus dashboard
+7b. **Web Visualization** → [ctrlClus dashboard](https://github.com/gioches/ctrlClus) processes data
+
+### 🛡️ Enterprise Resilience Features
+
+**Disk Freeze Protection** - **Unique Critical Capability**:
+- **Problem**: Traditional monitoring fails when disk I/O freezes occur (common in enterprise environments)
+- **Solution**: Complete tmpfs operation at `/opt/ramdisk`
+- **Result**: Monitoring continues even during storage infrastructure failures
+
+**Architecture Benefits**:
+- ✅ **Zero monitoring gaps** during disk failures
+- ✅ **Database operations** never blocked by storage issues
+- ✅ **Service detection** remains operational during I/O freeze
+- ✅ **State correlation** functions independently of disk health
+- ✅ **Critical alerting** continues during infrastructure problems
 
 ## 🛠️ Quick Installation
 

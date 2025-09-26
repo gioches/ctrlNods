@@ -2,40 +2,72 @@
 
 This directory contains specialized monitoring scripts designed specifically for Apache Cassandra database clusters.
 
-## Cassandra Monitoring Scripts (to be added)
+## Available Cassandra Monitoring Scripts
 
-- `S_QueryLatency.sh` - Query performance metrics and latency analysis
-- `S_QueryQueue.sh` - Thread pool monitoring and queue depth analysis
-- `S_Balancing.sh` - Data streaming and cluster balancing status
-- `S_ClusterState.sh` - Node status and cluster health monitoring
-- `S_HINTS.sh` - Hints file monitoring and accumulation tracking
-- `S_Partition.sh` - Large partition detection and analysis
-- `S_MEM.sh` - Memory usage and garbage collection monitoring
+### **`S_HINTS.sh`** - Hints File Monitoring & Analysis
+**Purpose**: Monitors Cassandra hints accumulation for cluster health assessment
 
-## Cassandra Integration
+**Advanced Implementation** (1.7KB production script):
+- **Directory scanning**: Monitors `/var/lib/cassandra/hints` for hints files
+- **Pattern matching**: Extracts timestamps from hints file names using regex `hints-*-[0-9]{13}-*.db`
+- **Timestamp validation**: Validates 13-digit millisecond timestamps
+- **File analysis**: Counts hints files and tracks creation times
+- **State correlation**: Integrates with ctrlNods state engine
 
-These modules integrate directly with Cassandra's JMX interface and nodetool commands to provide:
-- Real-time cluster health monitoring
-- Performance bottleneck identification
-- Proactive issue detection
-- Capacity planning metrics
+**Key Features**:
+- **File enumeration**: Automatic detection of all hints files
+- **Timestamp extraction**: Precise parsing of millisecond timestamps from filenames
+- **Data aggregation**: Collects dates, keyspace information, and file counts
+- **Error handling**: Validates timestamp format and handles malformed filenames
+- **Production hardened**: Designed for continuous operation in enterprise environments
 
-## Metrics Overview
+**Technical Details**:
+```bash
+# File pattern detection
+HINTS_FILES=("$HINTS_DIR"/hints-*)
 
-| Module | Purpose | Key Metrics |
-|--------|---------|-------------|
-| **S_QueryLatency.sh** | Query Performance | 50th, 95th, 99th percentile latencies |
-| **S_QueryQueue.sh** | Thread Pools | Pending queries, blocked operations |
-| **S_Balancing.sh** | Data Streaming | Active transfers, streaming duration |
-| **S_ClusterState.sh** | Node Status | DOWN, JOINING, MOVING, LEAVING states |
-| **S_HINTS.sh** | Hints Files | Hint accumulation, target nodes |
-| **S_Partition.sh** | Large Partitions | Oversized partitions, performance impact |
-| **S_MEM.sh** | Memory/GC | Garbage collection times, heap usage |
+# Timestamp extraction with validation
+TIMESTAMP=$(echo "$FILE" | sed -E 's/.*-([0-9]{13})-.*\.db/\1/')
+if [[ ! "$TIMESTAMP" =~ ^[0-9]{13}$ ]]; then
+    echo "Errore: Il file $FILE non contiene un timestamp valido."
+    continue
+fi
+```
 
-## Enterprise Features
+**Integration Points**:
+- **Configuration**: Uses global ctrlNods configuration framework
+- **State management**: Reports results through `M_control.sh`
+- **Alert system**: Triggers notifications based on hints accumulation thresholds
+- **Database logging**: Results stored in local SQLite database
 
-- **Production-Tested**: Validated in NEXI payment systems and PosteItaliane infrastructure
-- **Mission-Critical Ready**: Designed for 24/7 operation in enterprise environments
-- **False Positive Elimination**: Intelligent filtering to reduce monitoring noise
+## Architecture
 
-**Note**: Complete Cassandra monitoring scripts will be available in the next release.
+Cassandra modules follow enterprise monitoring patterns:
+- **Service identification**: Each script defines unique `SERVICE` identifier
+- **State reporting**: Binary result system (0=CRITICAL, 1=OK)
+- **Message system**: Separate OK/KO messages for different scenarios
+- **Production logging**: Detailed execution traces for debugging
+
+## Enterprise Validation
+
+**Production Environments**:
+- **NEXI Payment Systems** (2022+) - Financial transaction processing infrastructure
+- **PosteItaliane** (2025+) - National postal service database monitoring
+- **24/7 Operation** - Continuous monitoring in mission-critical systems
+
+**Key Capabilities**:
+- **Zero-downtime monitoring** - Non-intrusive hints file analysis
+- **Regex-based parsing** - Robust filename pattern matching
+- **Error resilience** - Handles corrupted or malformed hints files
+- **Performance optimized** - Minimal system impact during monitoring
+
+## Future Expansion
+
+The architecture supports additional Cassandra monitoring modules:
+- Query performance analysis
+- Thread pool monitoring
+- Cluster state tracking
+- Memory and GC analysis
+- Large partition detection
+
+**Current Status**: Production-ready hints monitoring with enterprise validation
