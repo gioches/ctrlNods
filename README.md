@@ -5,6 +5,7 @@
 [![GitHub stars](https://img.shields.io/github/stars/gioches/ctrlNods?style=social)](https://github.com/gioches/ctrlNods/stargazers)
 [![GitHub forks](https://img.shields.io/github/forks/gioches/ctrlNods?style=social)](https://github.com/gioches/ctrlNods/network/members)
 [![GitHub issues](https://img.shields.io/github/issues/gioches/ctrlNods)](https://github.com/gioches/ctrlNods/issues)
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 [![Cassandra Monitoring](https://img.shields.io/badge/Cassandra-Monitoring-blue)](https://github.com/gioches/ctrlNods)
 [![Bash Scripts](https://img.shields.io/badge/Bash-Scripts-green)](https://github.com/gioches/ctrlNods)
 [![Enterprise Ready](https://img.shields.io/badge/Enterprise-Ready-gold)](https://github.com/gioches/ctrlNods)
